@@ -1,0 +1,7 @@
+- Scrape title, sumamry, url from NPR's site
+    - * Bonus: add photos and other content in database
+
+- Users can leave comments on articles, comments will stay on page. Comments will be associated with the articles.
+    - Artices has many comments
+    - Users can delete comments
+    - All comments stored in db will be visible to all users
