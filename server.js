@@ -44,7 +44,7 @@ app.get("/scrape", function(req, res) {
     var $ = cheerio.load(response.data);
 
     $(".title").each(function(i, element) {
-      // Scraping title, link and brief desc from article
+      // Scraping title, link, img and brief desc from article
       var title = $(element).children("a").text();
       var link = $(element).children("a").attr("href");
       
@@ -53,32 +53,37 @@ app.get("/scrape", function(req, res) {
 
       $("img.respArchListImg").each(function(i, element) {
       var image = $(element).attr("src");
+
+      $("span.date").each(function (i, element) {
+        var date = $(element).text();
       
-      if (title && link) {
-        // Insert the data in the scrapedData db
-        db.scrapedData.insert({
+          if (title && link) {
+          // Insert the data in the scrapedData db
+          db.scrapedData.insert({
           title,
           link,
           teaser,
-          image
-        },
-        function(err, inserted) {
+          image,
+          date
+          },
+            function(err, inserted) {
           if (err) {
             console.log(err);
           }
           else {
             console.log(inserted);
           }
+          });
+          }
         });
-        }
       });
     });
   });
 });
 
-  res.send("Scrape Complete");
+  res.send("Scrape Complete! Look at your terminal.");
 });
 
 app.listen(8080, function() {
-  console.log("App running on port http://localhost:8080/");
+  console.log("App running on http://localhost:8080/ !");
 });
