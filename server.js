@@ -1,8 +1,19 @@
 // Dependencies
 var express = require("express");
-var mongojs = require("mongojs");
 var axios = require("axios");
 var cheerio = require("cheerio");
+var logger = require("morgan");
+var mongoose = require("mongoose");
+
+// Use morgan logger for logging requests
+app.use(logger("dev"));
+
+// Parse request body as JSON
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+
+// Make public a static folder
+app.use(express.static("public"));
 
 var app = express();
 
@@ -10,11 +21,8 @@ var app = express();
 var databaseUrl = "scraper";
 var collections = ["scrapedData"];
 
-// Mongojs config 
-var db = mongojs(databaseUrl, collections);
-db.on("error", function(error) {
-  console.log("Database Error:", error);
-});
+// Connect to the Mongo DB
+mongoose.connect("mongodb://localhost/unit18Populater", { useNewUrlParser: true });
 
 // Main route (simple Hello World Message)
 app.get("/", function(req, res) {
@@ -45,36 +53,27 @@ app.get("/scrape", function(req, res) {
 
     $(".title").each(function(i, element) {
       // Scraping title, link, img and brief desc from article
-      var title = $(element).children("a").text();
-      var link = $(element).children("a").attr("href");
+      var result = {};
+
+      result.title = $(this).children("a").text();
+      result.link = $(this).children("a").attr("href");
       
       $(".teaser").each(function(i, element) {
-      var teaser = $(element).children("a").text();
+      result.teaser = $(this).children("a").text();
 
       $("img.respArchListImg").each(function(i, element) {
-      var image = $(element).attr("src");
+      result.image = $(this).attr("src");
 
       $("span.date").each(function (i, element) {
-        var date = $(element).text();
+        result.date = $(this).text();
       
-          if (title && link) {
-          // Insert the data in the scrapedData db
-          db.scrapedData.insert({
-          title,
-          link,
-          teaser,
-          image,
-          date
-          },
-            function(err, inserted) {
-          if (err) {
+        db.Article.create(result)
+          .then(function(dbArticle) {
+            console.log(dbArticle);
+          })
+          .catch(function(err) {
             console.log(err);
-          }
-          else {
-            console.log(inserted);
-          }
           });
-          }
         });
       });
     });
