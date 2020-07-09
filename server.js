@@ -22,9 +22,6 @@ app.use(express.json());
 // Make public a static folder
 app.use(express.static("public"));
 
-// Connect to the Mongo DB
-mongoose.connect("mongodb://localhost/npr", { useNewUrlParser: true });
-
 // Scrape data from npr and put results in model
 app.get("/scrape", function (req, res) {
   axios.get("https://www.npr.org/sections/news/").then(function (response) {
