@@ -11,7 +11,7 @@ var db = require("./models")
 var app = express();
 
 // Deployed database
-var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/npr";
+var MONGODB_URI = process.env.MONGODB_URI || "mongodb://npr:password1@ds159772.mlab.com:59772/heroku_xwc8h9q1";
 mongoose.connect(MONGODB_URI);
 
 // Use morgan logger for logging requests
